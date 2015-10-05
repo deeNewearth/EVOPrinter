@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="EvoPrinterUI" />
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="EvoPrinterUIComponents">
+            <Component Id="cmp7E5337577850706BD36CB3D5F4806347" Directory="EvoPrinterUI" Guid="*">
+                <File Id="filA72E9FFCD205DC9D93BB23996A3AB32B" KeyPath="yes" Source="SourceDir\com.labizbille.evoSDK.dll" />
+            </Component>
+            
+            <Component Id="cmp247A97E446FD2D2AA6EBF11581463673" Directory="EvoPrinterUI" Guid="*">
+                <File Id="fil340055612402E66060C57F97D2100118" KeyPath="yes" Source="SourceDir\EvoPrinterUI.exe" />
+            </Component>
+            <Component Id="cmp131869B7AFE33D9D1178997D057CA9EE" Directory="EvoPrinterUI" Guid="*">
+                <File Id="filDA4EFF9CF61117C879CB849E8B46AA62" KeyPath="yes" Source="SourceDir\EvoPrinterUI.exe.config" />
+            </Component>
+            
+            
+            
+            
+            <Component Id="cmp2138DC29A70CB9B8DAAA5DCC57A13BFD" Directory="EvoPrinterUI" Guid="*">
+                <File Id="filB9565E5F4D1E3485670A1E012A887AC7" KeyPath="yes" Source="SourceDir\Microsoft.Expression.Interactions.dll" />
+            </Component>
+            <Component Id="cmp0042E3D34EA2968881008AD0E689A4FB" Directory="EvoPrinterUI" Guid="*">
+                <File Id="fil70E936994443BAB83598F0B8AC5BE9CC" KeyPath="yes" Source="SourceDir\Newtonsoft.Json.dll" />
+            </Component>
+            
+            <Component Id="cmp8BE71DA5F40A1E0120461A9FDF3917C3" Directory="EvoPrinterUI" Guid="*">
+                <File Id="fil644502C30CBBCF61253D897F594F9818" KeyPath="yes" Source="SourceDir\System.Windows.Interactivity.dll" />
+            </Component>
+            <Component Id="cmp6FB75D5A14AA14CEF9312EB2084FD1DD" Directory="EvoPrinterUI" Guid="*">
+                <File Id="fil5BF12B254D3DF79F69555E2617500FE7" KeyPath="yes" Source="SourceDir\WPFSpark.dll" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

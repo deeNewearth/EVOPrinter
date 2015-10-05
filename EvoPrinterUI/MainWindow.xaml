@@ -1,0 +1,169 @@
+﻿<Window x:Class="EvoPrinterUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:spark="clr-namespace:WPFSpark;assembly=WPFSpark"
+        xmlns:local="clr-namespace:EvoPrinterUI"
+        
+        Title="Print to EVO" Height="266.8" Width="456.4" Topmost="{Binding currDisplay.isWindowTopMost}" WindowStyle="SingleBorderWindow"
+        ResizeMode="NoResize"
+        
+        Icon="icon.ico"
+        Background="#6a717d"
+        >
+    <Border>
+        <Border.Background>
+            <ImageBrush ImageSource="evoLogoBig.png" Stretch="Uniform" AlignmentY="Center" Opacity="0.8"></ImageBrush>
+        </Border.Background>
+        <ContentControl Content="{Binding currDisplay}">
+        
+            <ContentControl.Resources>
+
+                <DataTemplate DataType="{x:Type local:ProcessorResult}">
+
+                    <Grid Margin="5" >
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Style>
+                        </Grid.Resources>
+                        
+                        <TextBlock Foreground="red" TextWrapping="Wrap" Margin="5" 
+                               Text="{Binding Error}"
+                               TextAlignment="Center"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding indexURL}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Margin="20 0 0 0" TextAlignment="Center">To index your document, please browse to</TextBlock>
+                        <TextBox Text="{Binding indexURL}"
+                         ToolTip="If the browser window is not opened automatically. Please copy this link and paste it in your browser window"
+                 Background="Transparent"
+         BorderThickness="0" TextWrapping="Wrap" IsReadOnly="True" Foreground="White" 
+                 FontWeight="SemiBold" TextAlignment="Center"
+                 FontSize="16" TextDecorations="Underline"/>
+                    </StackPanel>
+
+                </Grid>
+            </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:Processor}">
+                <StackPanel 
+                    FocusManager.FocusedElement="{Binding ElementName=tbUser}">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Style>
+
+                            <local:uriCOnverter x:Key="uriCOnverter"/>
+                        </StackPanel.Resources>
+
+                        <StackPanel IsEnabled="{Binding postBtnAvailable}">
+
+                        <Grid Margin="20 0 20 25">
+                            <GroupBox  Grid.Column="0" Header="Evo server" Foreground="White" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+
+                                        <ComboBox Grid.Column="0" 
+                                                IsEditable="True" 
+                                                  Text="{Binding selectedServer,
+                                            ValidatesOnDataErrors=True,ValidatesOnExceptions=True, 
+                                            Converter={StaticResource uriCOnverter}}" 
+                                                x:Name="serverCB" Height="20"
+                                                VerticalAlignment="Center"
+                                                ItemsSource="{Binding evoServers}" 
+                                              
+                                              >
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Converter={StaticResource uriCOnverter}}"/>
+                                                </DataTemplate>
+
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+
+
+                                        <TextBlock Grid.Column="1" Width="60">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding discoveryCompleted}" Value="true">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                </Grid>
+                            </GroupBox>
+                            <Grid  HorizontalAlignment="Right" Margin="0 6 5 0">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding discoveryCompleted}" Value="true">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <spark:SprocketControl   Width="50" Height="50"/>
+                                <TextBlock  TextAlignment="Center" VerticalAlignment="Center" >Discovering</TextBlock>
+                            </Grid>
+
+                        </Grid>
+
+                        <StackPanel Margin="20 0" >
+
+                                <TextBox  local:Behaviours.WaterMark="User name" Margin="30,5" x:Name="tbUser"
+                                          Text="{Binding UserName, ValidatesOnDataErrors=True}"/>
+                            <PasswordBox x:Name="password" local:Behaviours.WaterMark="Password" Margin="30,5"
+                                         local:Behaviours.BindPassword="true"
+                                         local:Behaviours.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         />
+                        </StackPanel>
+
+                        <Button Click="Button_Click" Margin="50,15,50,5" Background="#5cb85c" Foreground="White" 
+                IsDefault="True">Print to EVO</Button>
+
+                    </StackPanel>
+
+                    <Grid >
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Status}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <spark:SprocketControl   Width="50" Height="50"/>
+                        <TextBlock Margin="0 20" TextAlignment="Center"  Text="{Binding Status}"/>
+                    </Grid>
+
+                    <TextBlock FontWeight="SemiBold" TextAlignment="Center" Text="{Binding ghostMessage}"/>
+                    <TextBlock Foreground="red" TextWrapping="Wrap" Height="40" Margin="5" 
+                               Text="{Binding Error}"
+                               TextAlignment="Center"/>
+                    
+                    
+                </StackPanel>
+
+            </DataTemplate>
+            </ContentControl.Resources>
+        
+    </ContentControl>
+    </Border>
+</Window>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?if $(var.Platform) = x64 ?>
+    <?define ProductName = "EvoPrinter (64 bit)" ?>
+    <?define Win64 = "yes" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+    <?define PlatformSystemFolder = "System64Folder" ?>
+    <?define PlatformdriverFolder = "x64" ?>
+  
+
+  <?else ?>
+    <?define ProductName = "EvoPrinter" ?>
+    <?define Win64 = "no" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+    <?define PlatformSystemFolder = "SystemFolder" ?>
+    <?define PlatformdriverFolder = "W32X86" ?>
+
+  <?endif ?>
+
+  
+  <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="Labizbille" 
+                                                      UpgradeCode="6cb7750f-b2f9-48a8-802f-bb61c2edb9b7">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" 
+              InstallPrivileges="elevated" 
+             />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of EvoPrinter is already installed." />
+		<MediaTemplate />
+    
+		<Feature Id="ProductFeature" Title="EvoPrinter" Level="1">
+      <ComponentGroupRef Id="EvoPrinterUIComponents" />
+      <ComponentGroupRef Id="launchUserappComponents" />
+      <ComponentGroupRef Id="SystemFolderComponents" />
+      <ComponentRef Id="SpoolDriverComponent" />
+		</Feature>
+
+    <InstallExecuteSequence>
+      <Custom Action="AssignExecFile"  Before="ConfigurePrintDriver" />
+      <Custom Action="ConfigurePrintDriver" Before="InstallFinalize"  >
+        NOT Installed 
+      </Custom>
+      <Custom Action="removePrintDriver" Before="InstallFinalize">
+        Installed AND NOT UPGRADINGPRODUCTCODE
+      </Custom>
+    </InstallExecuteSequence>
+
+    <UIRef Id="WixUI_Minimal" />
+  
+	</Product>
+  
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="INSTALLFOLDER" Name="EvoPrinter" >
+          <Directory Id="EvoPrinterUI" Name="EvoPrinterUI" />
+          <Directory Id="launchUserapp" Name="launchUserapp" />
+        </Directory>
+     </Directory>
+
+      <Directory Id="$(var.PlatformSystemFolder)"  >
+        <Directory Id="SPOOLFOLDER" Name="spool" >
+          <Directory Id="DRIVERSFOLDER" Name="drivers" >
+            <Directory Id="SPOOLINSTALLFOLDER" Name="$(var.PlatformdriverFolder)" />
+          </Directory>
+        </Directory>
+      </Directory>
+    
+		</Directory>
+	</Fragment>
+
+  <Fragment>
+      <Property Id="MFILEMONVERSION">
+        <DirectorySearch Id="filemonDriverVersion" Path="[$(var.PlatformSystemFolder)]">
+          <FileSearch Name="mfilemon.dll" MinVersion="1.5.0.1300"/>
+        </DirectorySearch>
+      </Property>
+
+      <Property Id="MFILEMONUIVERSION">
+        <DirectorySearch Id="filemonUIDriverVersion" Path="[$(var.PlatformSystemFolder)]">
+          <FileSearch Name="mfilemonUI.dll" MinVersion="1.5.0.1300"/>
+        </DirectorySearch>
+      </Property>
+
+    <Component Id="SpoolDriverComponent" Directory="SPOOLINSTALLFOLDER" Guid="67327adf-b8ea-48a9-8a1b-4ef14fba5b68">
+
+      <File Id="Ghost_PPD"
+           Name="ghostpdf.ppd"
+           Source="$(var.printerDriver.ProjectDir)printerDriver\$(var.Platform)\ghostpdf.ppd"
+            />
+
+      <File Id="PRINTTOEVO_PPD"
+           Name="PRINTTOEVO.PPD"
+           Source="$(var.printerDriver.ProjectDir)printerDriver\$(var.Platform)\PRINTTOEVO.PPD"
+            />
+      <File Id="PS5UI_DLL"
+                 Name="PS5UI.DLL"
+                 Source="$(var.printerDriver.ProjectDir)printerDriver\$(var.Platform)\PS5UI.DLL"
+                  />
+      <File Id="PSCRIPT_HLP"
+                 Name="PSCRIPT.HLP"
+                 Source="$(var.printerDriver.ProjectDir)printerDriver\$(var.Platform)\PSCRIPT.HLP"
+                  />
+      <File Id="PSCRIPT_NTF"
+                 Name="PSCRIPT.NTF"
+                 Source="$(var.printerDriver.ProjectDir)printerDriver\$(var.Platform)\PSCRIPT.NTF"
+                  />
+      <File Id="PSCRIPT5_DLL"
+                 Name="PSCRIPT5.DLL"
+                 Source="$(var.printerDriver.ProjectDir)printerDriver\$(var.Platform)\PSCRIPT5.DLL"
+                 KeyPath="yes" />
+
+    </Component>
+    
+    <ComponentGroup Id="SystemFolderComponents" Directory="$(var.PlatformSystemFolder)">
+    
+      <Component Id="mfilemonui_dllComponent" Permanent="yes">
+        <Condition><![CDATA[Not Installed AND NOT MFILEMONUIVERSION]]></Condition>
+        <File Id="mfilemonui_dll"
+             Name="mfilemonUI.dll"
+             Source="$(var.printerDriver.ProjectDir)portDriver\$(var.Platform)\mfilemonUI.dll"
+             KeyPath="yes" />
+      </Component>
+    
+        
+      <Component Id="mfilemon_dllComponent" Permanent="yes">
+        <Condition><![CDATA[Not Installed AND NOT MFILEMONVERSION]]></Condition>
+        <File Id="mfilemon_dll"
+             Name="mfilemon.dll"
+             Source="$(var.printerDriver.ProjectDir)portDriver\$(var.Platform)\mfilemon.dll"
+             KeyPath="yes" />
+      </Component>
+    
+    </ComponentGroup>
+  </Fragment>
+    
+	<Fragment>
+
+    <CustomAction Id="AssignExecFile"
+            Property="ConfigurePrintDriver"
+            Value="execFile=[launchUserapp]$(var.launchUserapp.TargetFileName);execParam=[EvoPrinterUI]$(var.EvoPrinterUI.TargetFileName)" />
+
+
+    <CustomAction Id="ConfigurePrintDriver"   Impersonate="no"
+                Return="check" 
+                Execute="deferred" 
+                BinaryKey="prnDrv.O.dll" 
+                DllEntry="setupPrinterDriver" />
+
+    <CustomAction Id="removePrintDriver" 
+                Return="check" 
+                Execute="immediate" 
+                BinaryKey="prnDrv.O.dll" 
+                DllEntry="removePrinterDriver" />
+    
+
+    <Binary Id="prnDrv.O.dll"
+            SourceFile="$(var.printerDriver.TargetDir)$(var.printerDriver.TargetName).CA.dll" />
+    
+  
+  
+  </Fragment>
+
+
+</Wix>
