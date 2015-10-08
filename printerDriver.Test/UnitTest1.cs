@@ -8,6 +8,13 @@ namespace printerDriver.Test
     public class UnitTest1
     {
         [TestMethod]
+        public void testGSINstall()
+        {
+            printerDriver.CustomActions.EnusreGS("..//sasd.txt");
+        }
+
+
+        [TestMethod]
         public void testMonitorCreation()
         {
             var s= new printerDriver.SpoolerHelper(null);

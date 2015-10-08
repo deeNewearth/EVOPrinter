@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Microsoft.Deployment.WindowsInstaller;
+using Microsoft.Win32;
 
 namespace printerDriver
 {
@@ -42,14 +45,76 @@ namespace printerDriver
 
         }
 
+
+        public static void EnusreGS(String configFileName)
+        {
+            if (!File.Exists(configFileName))
+                throw new Exception("Config file [" + configFileName + "]not found");
+
+
+            var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\GPL Ghostscript", false);
+            if (null == regKey)
+                throw new Exception("GPL Ghostscript not installed");
+
+            var subkeys = regKey.GetSubKeyNames();
+
+            var latestVersion = subkeys.Select(n =>
+                {
+
+                    Version ver;
+                    if (!Version.TryParse(n, out ver))
+                        ver = null;
+
+                    return new
+                    {
+                        Version = ver,
+                        subKey = n
+                    };
+                        
+                }).Where(v=>null != v.Version).OrderByDescending(v=>v.Version).FirstOrDefault();
+
+            if(null == latestVersion)
+                throw new Exception("GS version key not found");
+
+
+            var verKey = regKey.OpenSubKey(latestVersion.subKey);
+            var gsDLL = verKey.GetValue("GS_DLL") as String;
+
+            if (String.IsNullOrWhiteSpace(gsDLL) || !File.Exists(gsDLL))
+                throw new Exception("GhostScript Engine dll not found");
+
+            var gsPath = Path.GetDirectoryName(gsDLL);
+
+            var ps2pdfPath = Path.Combine(
+                Directory.GetParent(gsPath).FullName,"lib","ps2pdf14.bat");
+
+            if (!File.Exists(ps2pdfPath))
+                throw new Exception("ps2pdfPath [" + ps2pdfPath+"] not found");
+
+
+            var configFile = new XmlDocument();
+            configFile.Load(configFileName);
+            XmlNode root = configFile.DocumentElement;
+            XmlNode myNode = configFile.SelectSingleNode(@"configuration/applicationSettings/EvoPrinterUI.Properties.Settings/setting[@name='GSBinDirectory']");
+            myNode.FirstChild.InnerText = gsPath;
+
+            myNode = configFile.SelectSingleNode(@"configuration/applicationSettings/EvoPrinterUI.Properties.Settings/setting[@name='ps2pdfPath']");
+            myNode.FirstChild.InnerText = ps2pdfPath;
+
+            
+            configFile.Save(configFileName);
+
+        }
+
         [CustomAction]
         public static ActionResult setupPrinterDriver(Session session)
         {
+            
             /*
-            var g1 = true;
-            while (g1)
+            var g1 = 5 * 60; //5 min
+            while (g1-- > 0)
             {
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(1000); //1 sec
             }
              */
              
@@ -68,6 +133,8 @@ namespace printerDriver
 
                 execPath = String.Format("\"{0}\" \"{1}\"  \"%p\" \"%f\" ", execPath, execParam);
                 //var j1 = session["EXECFILE"];
+
+                //EnusreGS(execParam + ".config");
 
                 var spooler = new SpoolerHelper(new LogHelper(session));
 

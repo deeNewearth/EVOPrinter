@@ -47,5 +47,11 @@ namespace EvoPrinterUI
             _processor.Post();
         }
 
+        private void Button_CloseClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+
+        }
+
     }
 }

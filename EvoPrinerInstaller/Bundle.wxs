@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Bundle Name="EvoPrinerInstaller" Version="1.0.0.0" Manufacturer="" UpgradeCode="2a89c791-4bf5-49b1-b554-6f4ffc56b437">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"   
+  xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+  >
+	<Bundle Name="EvoPrinerInstaller" Version="1.0.0.0" Manufacturer="Labizbille" UpgradeCode="2a89c791-4bf5-49b1-b554-6f4ffc56b437">
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
 
 		<Chain>
-			<!-- TODO: Define the list of chained packages. -->
-			<!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
-		</Chain>
+      <PackageGroupRef Id="defPackageGroup"/>
+    </Chain>
 	</Bundle>
+
+  <Fragment>
+        
+      
+    <PackageGroup Id="defPackageGroup">
+    
+      <ExePackage Id="testds" Vital="yes" Cache="yes"  InstallCommand="robbocop [WixBundleExecutePackageCacheFolder] [TempFolder]"
+                  SourceFile="C:\codework\openSource\EVOPrintergit\testHardeness64\bin\x64\Debug\testHardeness64.exe"
+                  />
+      
+      <MsiPackage  Id="IPDev" Cache="no" Compressed="no"  DisplayInternalUI="yes" Vital="yes" 
+                   SourceFile="$(var.EvoPrinter_x64.TargetPath)"/>
+
+    </PackageGroup>
+  </Fragment>
+  
 </Wix>

@@ -66,15 +66,24 @@ namespace EvoPrinterUI
 
     class Processor : processorBase, IDisposable
     {
-
-        readonly static String _tmpFolder = System.IO.Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EvoPrinterUI");
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+                            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+       /* readonly static String _tmpFolder = 
+        */
+        readonly static String _tmpFolder;
 
         static Processor()
         {
+            _tmpFolder = Properties.Settings.Default.tmpfileFolder;
+            if(String.IsNullOrWhiteSpace(_tmpFolder))
+                _tmpFolder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EvoPrinterUI");
+
+            log.Info("Using _tmpFolder " + _tmpFolder);
+
             //clean up any stuff left
             if (!Directory.Exists(_tmpFolder))
             {
+                log.Info("Creating Folder " + _tmpFolder);
                 Directory.CreateDirectory(_tmpFolder);
                 return;
             }
@@ -373,12 +382,27 @@ namespace EvoPrinterUI
             }
         }
 
+        /*
+        async Task EnsureGHostScriptInstalled()
+        {
+             
+        }
+         */
+
         String _inputPdfPath = null;
+
+        readonly String _logFile = Path.Combine(_tmpFolder,String.Format("{0}.log", Guid.NewGuid()));
 
         async Task GhostIT()
         {
+            log.Info("Starting GhostIT");
+
+            
             Status = "Processing print job";
             ghostMessage = null;
+
+            /*using(System.IO.StreamWriter LogStream =
+                                    new System.IO.StreamWriter(_logFile))*/
             try
             {
                 var args = Environment.GetCommandLineArgs();
@@ -396,6 +420,9 @@ namespace EvoPrinterUI
                 if (File.Exists(_outputPdfPath))
                     throw new InvalidOperationException("Output file already exists");
 
+               // Ensure
+                log.Info("Starting Process");
+
                 using (var p = new Process())
                 {
                     // Redirect the output stream of the child process.
@@ -404,10 +431,12 @@ namespace EvoPrinterUI
                     p.StartInfo.RedirectStandardError = true;
                     p.StartInfo.CreateNoWindow = true;
 
-                    p.StartInfo.WorkingDirectory = @"C:\Program Files\gs\gs9.16\bin";
+                    //p.StartInfo.WorkingDirectory = @"C:\Program Files\gs\gs9.16\bin";
+                    p.StartInfo.WorkingDirectory = Properties.Settings.Default.GSBinDirectory;
 
                     //"C:\Program Files\gs\gs9.16\lib\ps2pdf14.bat" C:\EvoPrinterQUEUE\Temp\gppd.ps C:\EvoPrinterQUEUE\Temp\gppd.pdf
-                    var execFile = @"C:\Program Files\gs\gs9.16\lib\ps2pdf14.bat";
+                    //var execFile = @"C:\Program Files\gs\gs9.16\lib\ps2pdf14.bat";
+                    var execFile = Properties.Settings.Default.ps2pdfPath;
 
                     p.StartInfo.FileName = String.Format("\"{0}\" \"{1}\" \"{2}\" ", execFile, _inputPdfPath, _outputPdfPath);
                     p.Start();
@@ -438,11 +467,12 @@ namespace EvoPrinterUI
 
                 }
             }
+        
             catch (Exception ex)
             {
                 currDisplay =new ProcessorResult
                 {
-                    Error = ex.Message
+                    Error = "Ghost error : " + ex.Message
                 };
 
                 CLoseit();
@@ -453,6 +483,7 @@ namespace EvoPrinterUI
             {
                 Status = null;
             }
+        
         }
 
 
