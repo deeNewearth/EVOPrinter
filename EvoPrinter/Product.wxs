@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+     >
 
-  <?if $(var.Platform) = x64 ?>
-    <?define ProductName = "EvoPrinter (64 bit)" ?>
-    <?define Win64 = "yes" ?>
-    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
-    <?define PlatformSystemFolder = "System64Folder" ?>
-    <?define PlatformdriverFolder = "x64" ?>
-  
-
-  <?else ?>
-    <?define ProductName = "EvoPrinter" ?>
-    <?define Win64 = "no" ?>
-    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
-    <?define PlatformSystemFolder = "SystemFolder" ?>
-    <?define PlatformdriverFolder = "W32X86" ?>
-
-  <?endif ?>
-
+  <?include .\globals.wxi ?>
   
   <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="Labizbille" 
                                                       UpgradeCode="6cb7750f-b2f9-48a8-802f-bb61c2edb9b7">
@@ -29,10 +16,11 @@
 		<MediaTemplate />
     
 		<Feature Id="ProductFeature" Title="EvoPrinter" Level="1">
-      <ComponentGroupRef Id="EvoPrinterUIComponents" />
+      <ComponentGroupRef Id="EvoPrinterUI_x64Components" />
       <ComponentGroupRef Id="launchUserappComponents" />
       <ComponentGroupRef Id="SystemFolderComponents" />
       <ComponentRef Id="SpoolDriverComponent" />
+      <ComponentRef Id="IE11EmulationComponent" />
 		</Feature>
 
     <InstallExecuteSequence>
@@ -46,8 +34,8 @@
     </InstallExecuteSequence>
 
     <UIRef Id="WixUI_Minimal" />
-  
-	</Product>
+
+  </Product>
   
 
 	<Fragment>
@@ -55,7 +43,7 @@
 			
       <Directory Id="$(var.PlatformProgramFilesFolder)">
         <Directory Id="INSTALLFOLDER" Name="EvoPrinter" >
-          <Directory Id="EvoPrinterUI" Name="EvoPrinterUI" />
+          <Directory Id="EvoPrinterUI_x64Folder" Name="EvoPrinterUI" />
           <Directory Id="launchUserapp" Name="launchUserapp" />
         </Directory>
      </Directory>
@@ -78,12 +66,11 @@
         </DirectorySearch>
       </Property>
 
-      <Property Id="MFILEMONUIVERSION">
+    <Property Id="MFILEMONUIVERSION">
         <DirectorySearch Id="filemonUIDriverVersion" Path="[$(var.PlatformSystemFolder)]">
           <FileSearch Name="mfilemonUI.dll" MinVersion="1.5.0.1300"/>
         </DirectorySearch>
-      </Property>
-
+    </Property>
     <Component Id="SpoolDriverComponent" Directory="SPOOLINSTALLFOLDER" Guid="67327adf-b8ea-48a9-8a1b-4ef14fba5b68">
 
       <File Id="Ghost_PPD"
@@ -140,7 +127,7 @@
 
     <CustomAction Id="AssignExecFile"
             Property="ConfigurePrintDriver"
-            Value="execFile=[launchUserapp]$(var.launchUserapp.TargetFileName);execParam=[EvoPrinterUI]$(var.EvoPrinterUI.TargetFileName)" />
+            Value="execFile=[launchUserapp]$(var.launchUserapp.TargetFileName);execParam=[EvoPrinterUI_x64Folder]$(var.EvoPrinterUI_x64.TargetFileName)" />
 
 
     <CustomAction Id="ConfigurePrintDriver"   Impersonate="no"
@@ -158,9 +145,25 @@
 
     <Binary Id="prnDrv.O.dll"
             SourceFile="$(var.printerDriver.TargetDir)$(var.printerDriver.TargetName).CA.dll" />
-    
-  
-  
+
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_451_OR_LATER_INSTALLED" />
+    <Condition Message="This application requires .NET Framework 4.5.1 or later. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_451_OR_LATER_INSTALLED]]>
+    </Condition>
+
+    <!-->util:RegistrySearch Id="IEVerSearch" Variable="IEVERSION"
+                    Root="HKLM"
+                    Key="SOFTWARE\Microsoft\Internet Explorer"
+                    Value="svcVersion" Win64="yes"
+                    Format="raw" />
+
+
+    <Condition Message="This application requires Internet Explorer 11 or later installed.">
+      <![CDATA[IEVERSION >= 11]]>
+    </Condition-->
+
+
+
   </Fragment>
 
 

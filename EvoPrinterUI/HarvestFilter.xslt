@@ -14,4 +14,8 @@ xmlns:wix="http://schemas.microsoft.com/wix/2006/wi">
   <xsl:key name="service-search" match="wix:Component[contains(wix:File/@Source, 'app.config')]" use="@Id" />
   <xsl:template match="wix:Component[key('service-search', @Id)]" />
   <xsl:template match="wix:ComponentRef[key('service-search', @Id)]" />
+
+  <xsl:template match="wix:RegistryValue"/>
+  <xsl:template match="wix:Class"/>
+
 </xsl:stylesheet>

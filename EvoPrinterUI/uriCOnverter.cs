@@ -28,9 +28,9 @@ namespace EvoPrinterUI
                 var val = value as String;
                 if(String.IsNullOrWhiteSpace(val))
                     return null;
-
+                //http://mulahmakeriii:8001/EvoService
                 if(!val.ToLowerInvariant().Trim().StartsWith("http://"))
-                    val = "http://" + val;
+                    val = "http://" + val + "/EvoService";
 
                 return new Uri(val);
 

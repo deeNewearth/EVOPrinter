@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EvoPrinterUI</RootNamespace>
-    <AssemblyName>EvoPrinterUI</AssemblyName>
+    <AssemblyName>EvoPrinterUI_x64</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -42,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -58,8 +60,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="com.labizbille.evoSDK, Version=1.0.5756.26727, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\com.labizbille.evoSDK.1.0.5756.26727\lib\net45\com.labizbille.evoSDK.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\evo2\srDocumentManager\evoSDK\bin\Debug\com.labizbille.evoSDK.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -105,8 +107,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BrowserControl.xaml.cs">
+      <DependentUpon>BrowserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="modelBase.cs" />
     <Compile Include="uriCOnverter.cs" />
+    <Page Include="BrowserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -159,9 +168,15 @@
   <ItemGroup>
     <None Include="HarvestFilter.xslt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ieWrapper\ieWrapper.csproj">
+      <Project>{a43fc89b-16c4-4b31-8e73-8835748f2b61}</Project>
+      <Name>ieWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call "%25wix%25\bin\heat.exe" dir $(TargetDir) -var "var.$(ProjectName).TargetDir" -ag -srd  -dr $(TargetName) -cg $(TargetName)Components -template fragment   -out $(SolutionDir)EvoPrinter\EvoPrinterUI.wxs -v -t $(ProjectDir)HarvestFilter.xslt</PostBuildEvent>
+    <PostBuildEvent>call "%25wix%25\bin\heat.exe" dir $(TargetDir) -var "var.$(ProjectName).TargetDir" -ag -srd  -dr $(TargetName)Folder -cg $(TargetName)Components -template fragment   -out $(SolutionDir)EvoPrinter\EvoPrinterUI.wxs -v -t $(ProjectDir)HarvestFilter.xslt</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

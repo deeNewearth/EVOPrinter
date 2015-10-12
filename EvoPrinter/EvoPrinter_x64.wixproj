@@ -32,12 +32,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="EvoPrinterUI.wxs" />
+    <Compile Include="IEBrowser.wxs" />
     <Compile Include="launchUserapp.wxs" />
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EvoPrinterUI\EvoPrinterUI.csproj">
-      <Name>EvoPrinterUI</Name>
+    <ProjectReference Include="..\EvoPrinterUI\EvoPrinterUI_x64.csproj">
+      <Name>EvoPrinterUI_x64</Name>
       <Project>{0f5332a7-460f-4f11-b498-acb2fc14255c}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
@@ -62,10 +63,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
     <WixExtension Include="WixUIExtension">
       <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
       <Name>WixUIExtension</Name>
     </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="globals.wxi" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--

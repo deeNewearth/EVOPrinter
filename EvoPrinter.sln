@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "EvoPrinter_x86", "EvoPrinter\EvoPrinter_x86.wixproj", "{4282A4F1-AC48-47E8-99A4-4E39E50D3885}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvoPrinterUI", "EvoPrinterUI\EvoPrinterUI.csproj", "{0F5332A7-460F-4F11-B498-ACB2FC14255C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvoPrinterUI_x64", "EvoPrinterUI\EvoPrinterUI_x64.csproj", "{0F5332A7-460F-4F11-B498-ACB2FC14255C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "printerDriver", "printerDriver\printerDriver.csproj", "{39AB227B-FAA6-48F4-80BF-8EAAE23E09BD}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launchUserapp", "launchUserapp\launchUserapp.csproj", "{FC47FB3C-5C66-41A2-9D87-D3595D82819D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testHardeness64", "testHardeness64\testHardeness64.csproj", "{A8DF1AC1-FB0B-438F-A020-64CD168EFCA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "awesominiumWrapper", "awesominiumWrapper\awesominiumWrapper.csproj", "{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ieWrapper", "ieWrapper\ieWrapper.csproj", "{A43FC89B-16C4-4B31-8E73-8835748F2B61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,18 +53,18 @@ Global
 		{4282A4F1-AC48-47E8-99A4-4E39E50D3885}.Release|x64.ActiveCfg = Release|x86
 		{4282A4F1-AC48-47E8-99A4-4E39E50D3885}.Release|x86.ActiveCfg = Release|x86
 		{4282A4F1-AC48-47E8-99A4-4E39E50D3885}.Release|x86.Build.0 = Release|x86
-		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|DEBUGonlyPrinterUI.ActiveCfg = Debug|Any CPU
-		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|DEBUGonlyPrinterUI.Build.0 = Debug|Any CPU
+		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|Any CPU.Build.0 = Debug|x64
+		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|DEBUGonlyPrinterUI.ActiveCfg = Debug|x64
+		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|DEBUGonlyPrinterUI.Build.0 = Debug|x64
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|debugx64printdriver.ActiveCfg = Debug|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Debug|x86.Build.0 = Debug|Any CPU
-		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|Any CPU.ActiveCfg = Release|x64
+		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|Any CPU.Build.0 = Release|x64
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|DEBUGonlyPrinterUI.ActiveCfg = Release|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|DEBUGonlyPrinterUI.Build.0 = Release|Any CPU
 		{0F5332A7-460F-4F11-B498-ACB2FC14255C}.Release|debugx64printdriver.ActiveCfg = Release|Any CPU
@@ -165,6 +169,40 @@ Global
 		{A8DF1AC1-FB0B-438F-A020-64CD168EFCA1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A8DF1AC1-FB0B-438F-A020-64CD168EFCA1}.Release|x64.ActiveCfg = Release|Any CPU
 		{A8DF1AC1-FB0B-438F-A020-64CD168EFCA1}.Release|x86.ActiveCfg = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|DEBUGonlyPrinterUI.ActiveCfg = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|DEBUGonlyPrinterUI.Build.0 = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|debugx64printdriver.ActiveCfg = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|DEBUGonlyPrinterUI.ActiveCfg = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|debugx64printdriver.ActiveCfg = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{E12C22AF-BB13-4AE0-B0A8-B81844CFD2D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|DEBUGonlyPrinterUI.ActiveCfg = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|DEBUGonlyPrinterUI.Build.0 = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|debugx64printdriver.ActiveCfg = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|DEBUGonlyPrinterUI.ActiveCfg = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|debugx64printdriver.ActiveCfg = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|x64.ActiveCfg = Release|Any CPU
+		{A43FC89B-16C4-4B31-8E73-8835748F2B61}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -17,9 +17,47 @@ using Newtonsoft.Json;
 
 namespace EvoPrinterUI
 {
+    class StateHolder : Modelbase
+    {
+        /// <summary>
+        /// We trigger a change on this to start height/width animation
+        /// </summary>
+        public object dummy { get; set; }
+
+        public processorBase currDisplay
+        {
+            get { return GetValue(() => currDisplay); }
+            set
+            {
+                var curr = GetValue(() => currDisplay);
+                if (curr == value)
+                    return;
+
+                if (null != curr)
+                    curr.NextStateEvent -= OnNextStateEvent;
+
+                SetValue(() => currDisplay, value);
+
+                Task.Run(async () =>
+                {
+                    await Task.Delay(100);
+                    NotifyPropertyChanged(() => dummy);
+                });
+
+                value.NextStateEvent += OnNextStateEvent;
+
+            }
+        }
+
+        void OnNextStateEvent(processorBase obj)
+        {
+            currDisplay = obj;
+        }
+
+    };
+
     abstract class processorBase : Modelbase
     {
-        
         public bool isWindowTopMost
         {
             get { return GetValue(() => isWindowTopMost); }
@@ -32,21 +70,33 @@ namespace EvoPrinterUI
             set { SetValue(() => Status, value); }
         }
 
-        public processorBase currDisplay
-        {
-            get { return GetValue(() => currDisplay); }
-            set { SetValue(() => currDisplay, value); }
-        }
-
+      
         public String Error
         {
             get { return GetValue(() => Error); }
             set { SetValue(() => Error, value); }
         }
 
-        public processorBase()
+
+        readonly double _DesignHeight;
+        public double DesignHeight { get { return _DesignHeight; } }
+
+        readonly double _DesignWidth;
+        public double DesignWidth { get { return _DesignWidth; } }
+
+
+        public event Action<processorBase> NextStateEvent;
+
+        protected void SetNextState(processorBase next)
         {
-            currDisplay = this;
+            if(null != NextStateEvent)
+                NextStateEvent(next);
+        }
+
+        public processorBase(double designHeight = 300, double designWidth = 400)
+        {
+            _DesignHeight = designHeight;
+            _DesignWidth = designWidth;
         }
 
     }
@@ -58,6 +108,32 @@ namespace EvoPrinterUI
         {
             get { return GetValue(() => indexURL); }
             set { SetValue(() => indexURL, value); }
+        }
+
+    }
+
+    class ProcessorWindow : processorBase
+    {
+        readonly String _loginToken;
+        public ProcessorWindow(String LoginToken) : base(550, 600)
+        {
+            _loginToken = LoginToken;
+        }
+
+        public String loginToken { get { return _loginToken; } }
+
+        public String indexURL
+        {
+            get { return GetValue(() => indexURL); }
+            set { SetValue(() => indexURL, value); }
+        }
+
+        public void OnLoadError(String error)
+        {
+            SetNextState(new ProcessorResult
+            {
+                Error = error
+            });
         }
 
     }
@@ -189,7 +265,9 @@ namespace EvoPrinterUI
         readonly String _outputPdfPath;
         public Processor()
         {
+#if RELEASE
             isWindowTopMost = true;
+#endif
 
             postBtnAvailable = true;
             _outputPdfPath = Path.Combine(_tmpFolder,
@@ -204,10 +282,13 @@ namespace EvoPrinterUI
         bool _bIsDisposed = false;
         public void Dispose()
         {
-            if (File.Exists(_outputPdfPath))
-                File.Delete(_outputPdfPath);
+            try
+            {
+                if (File.Exists(_outputPdfPath))
+                    File.Delete(_outputPdfPath);
 
-            _bIsDisposed = true;
+                _bIsDisposed = true;
+            }catch{}
         }
 
         ~Processor()
@@ -290,25 +371,32 @@ namespace EvoPrinterUI
                                     var JobCode = evo.CreateShortCode(new JobCodeRequest
                                     {
                                         JobContext = JsonConvert.SerializeObject(JobContext),
-                                        expiration = DateTime.Now + _resultDuration 
+                                        expiration = DateTime.Now + _resultDuration,
+                                        AppName="evoPrinter",
+                                        AppSecret="not used"
                                     });
 
                                     CLoseit();
 
                                     var linkURL = string.Format("http://{0}:{1}/#/docviewer_newDoc?routeContext=shortcode:{2}",
-                                            selectedServer.DnsSafeHost, selectedServer.Port, JobCode);
+                                            selectedServer.DnsSafeHost, selectedServer.Port, JobCode.code);
 
-                                    Process.Start(linkURL);
+                                    //Process.Start(linkURL);
 
-                                    currDisplay = new ProcessorResult
+                                    SetNextState(new ProcessorWindow(
+                                        System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+                                            String.Format("{0}:{1}", UserName.Trim(), JobCode.LoginToken.Trim())) )
+                                        )
                                     {
                                         indexURL = linkURL
-                                    };
+                                    });
 
                                     try
                                     {
+#if RELEASE
                                         if (File.Exists(_inputPdfPath))
                                             File.Delete(_inputPdfPath);
+#endif
                                     }
                                     catch { }
 
@@ -408,7 +496,8 @@ namespace EvoPrinterUI
                 var args = Environment.GetCommandLineArgs();
                 if (args.Length < 3)
                 {
-                    throw new InvalidOperationException("Printer data not received");
+                    //throw new InvalidOperationException("Printer data not received");
+                    _inputPdfPath = @"C:\codework\srDocManager\SrDocumentManager\sample data\images\Boeing Purchase Orders.pdf";
                 }
                 else
                 {
@@ -456,7 +545,9 @@ namespace EvoPrinterUI
                         }
 
                        var t = Regex.Matches(output, @"\[Page:(.*)\]");
-                       ghostMessage = String.Format("{0} pages ready to print", t.Count);
+                       //ghostMessage = String.Format("{0} pages ready to print", t.Count);
+                        //9.18 is not sending any std output
+                       ghostMessage = String.Format("Ready to print");
 
                        
                     }
@@ -470,10 +561,10 @@ namespace EvoPrinterUI
         
             catch (Exception ex)
             {
-                currDisplay =new ProcessorResult
+                SetNextState(new ProcessorResult
                 {
                     Error = "Ghost error : " + ex.Message
-                };
+                });
 
                 CLoseit();
 

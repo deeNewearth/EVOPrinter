@@ -22,11 +22,18 @@ namespace EvoPrinterUI
     public partial class MainWindow : Window
     {
         readonly Processor _processor = new Processor();
+        readonly StateHolder _holder;
         public MainWindow()
         {
+            _holder = new StateHolder
+            {
+                currDisplay = _processor
+            };
+            
             InitializeComponent();
-            DataContext = _processor;
+            DataContext = _holder;
 
+            
             _processor.OnCLoseEvent+= ()=>
             {
                 Dispatcher.BeginInvoke((Action)(() =>
@@ -49,6 +56,11 @@ namespace EvoPrinterUI
 
         private void Button_CloseClick(object sender, RoutedEventArgs e)
         {
+           /* _holder.currDisplay = _holder.currDisplay is ProcessorWindow ? (processorBase)_processor:new ProcessorWindow
+            {
+                indexURL ="http://localhost:8001"
+                //indexURL = "http://www.yahoo.com"
+            } ;*/
             Application.Current.Shutdown();
 
         }

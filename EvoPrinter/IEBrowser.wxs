@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <?include .\globals.wxi ?>
+    
+	<Fragment>
+
+    <Property Id="IEVERSION">
+      <RegistrySearch Id="IEVer"
+                    Root="HKLM"
+                    Key="SOFTWARE\Microsoft\Internet Explorer"
+                             Name="svcVersion" Win64="yes"
+                    Type="raw" />
+    </Property>
+    <Condition Message="This application requires Internet Explorer 11 or later installed.">
+      <![CDATA[IEVERSION >= "11"]]>
+    </Condition>
+
+		<Component Id="IE11EmulationComponent" Guid="*" Directory="INSTALLFOLDER" >
+        <RegistryKey Root="HKLM" 
+                     Key="Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION"
+              >
+            <RegistryValue Type="integer" Name="$(var.browserContainingExe)" Value="11001" KeyPath="yes" />
+        </RegistryKey>
+    </Component>
+	</Fragment>
+</Wix>

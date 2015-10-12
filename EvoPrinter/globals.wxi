@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?if $(var.Platform) = x64 ?>
+  <?define ProductName = "EvoPrinter (64 bit)" ?>
+  <?define Win64 = "yes" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?define PlatformSystemFolder = "System64Folder" ?>
+  <?define PlatformdriverFolder = "x64" ?>
+
+
+  <?else ?>
+  <?define ProductName = "EvoPrinter" ?>
+  <?define Win64 = "no" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?define PlatformSystemFolder = "SystemFolder" ?>
+  <?define PlatformdriverFolder = "W32X86" ?>
+
+  <?endif ?>
+
+  <?define browserContainingExe = "$(var.EvoPrinterUI_x64.TargetName)$(var.EvoPrinterUI_x64.TargetExt)" ?>
+
+</Include>

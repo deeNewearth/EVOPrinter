@@ -36,8 +36,8 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EvoPrinterUI\EvoPrinterUI.csproj">
-      <Name>EvoPrinterUI</Name>
+    <ProjectReference Include="..\EvoPrinterUI\EvoPrinterUI_x64.csproj">
+      <Name>EvoPrinterUI_x64</Name>
       <Project>{0f5332a7-460f-4f11-b498-acb2fc14255c}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>

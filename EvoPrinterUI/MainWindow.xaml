@@ -4,12 +4,43 @@
         xmlns:spark="clr-namespace:WPFSpark;assembly=WPFSpark"
         xmlns:local="clr-namespace:EvoPrinterUI"
         
-        Title="Print to EVO" Height="266.8" Width="456.4" Topmost="{Binding currDisplay.isWindowTopMost}" WindowStyle="None"
-        ResizeMode="NoResize"
+        
+        ResizeMode="CanResizeWithGrip"
+        Title="Print to EVO"
+         
+        
+        Topmost="{Binding currDisplay.isWindowTopMost}" WindowStyle="ToolWindow"
         
         Icon="icon.ico"
         Background="#6a717d"
+        
+        Tag="{Binding Path=dummy,Mode=OneWay, NotifyOnTargetUpdated=True}"
+        
         >
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Height" Value="300"/>
+            <Setter Property="Width" Value="400"/>
+        </Style>
+    </Window.Style>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Binding.TargetUpdated">
+            <BeginStoryboard>
+                <Storyboard >
+                    <DoubleAnimation Storyboard.TargetProperty="Width" To="{Binding currDisplay.DesignWidth}" 
+                                     
+                                     Duration="0:0:0.6" />
+                    <DoubleAnimation Storyboard.TargetProperty="Height" To="{Binding currDisplay.DesignHeight}" 
+                                     BeginTime="0:0:0.6"
+                                     Duration="0:0:0.6" />
+                    
+                    
+                </Storyboard>
+                
+            </BeginStoryboard>
+            
+        </EventTrigger>
+    </Window.Triggers>
     <Window.Resources>
         <Style x:Key="StandardButton" TargetType="Button">
             <Setter Property="Visibility" Value="Visible"/>
@@ -45,6 +76,11 @@
             </Setter>
         </Style>
     </Window.Resources>
+    <Border 
+        BorderBrush="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="mainBD"
+        >
+        
+        
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -55,12 +91,14 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+
+            <!--TextBlock Grid.Column="0" Grid.Row="0" Foreground="White" FontSize="16" HorizontalAlignment="Center">Print to EVO</TextBlock>
             
-            <StackPanel Grid.Column="1" Grid.Row="0" Margin="1 0">
+            <StackPanel Grid.Column="1" Grid.Row="0" Margin="1 0" >
                 <Button Style="{StaticResource StandardButton}" Width="20" HorizontalContentAlignment="Center" 
                         IsCancel="True" Click="Button_CloseClick"
                         >x</Button>
-            </StackPanel>
+            </StackPanel-->
 
         <Border Margin="10 0" Grid.Row="1" Grid.ColumnSpan="2" >
             <Border.Background>
@@ -69,8 +107,12 @@
             <ContentControl Content="{Binding currDisplay}">
 
                     <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type local:ProcessorWindow}">
+                            <local:BrowserControl />
+                    </DataTemplate>
 
-                        <DataTemplate DataType="{x:Type local:ProcessorResult}">
+
+                    <DataTemplate DataType="{x:Type local:ProcessorResult}">
 
                             <Grid Margin="5" >
                                 <Grid.Resources>
@@ -219,6 +261,7 @@
                 </ContentControl>
         </Border>
     </Grid>
+    </Border>
         
    
 </Window>
