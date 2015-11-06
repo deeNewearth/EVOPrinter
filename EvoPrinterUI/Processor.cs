@@ -142,6 +142,11 @@ namespace EvoPrinterUI
 
     class Processor : processorBase, IDisposable
     {
+        readonly static string DAPIENTROPY = null;
+
+        
+        
+
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
                             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
        /* readonly static String _tmpFolder = 
@@ -198,7 +203,6 @@ namespace EvoPrinterUI
 
 
 
-        Uri[] _evoServers = new Uri[] { };
         public Uri[] evoServers
         {
             get { return _evoServers; }
@@ -248,6 +252,19 @@ namespace EvoPrinterUI
             set { SetValue(() => Password, value); }
         }
 
+        public String PasswordPrompt
+        {
+            get { return GetValue(() => PasswordPrompt); }
+            set { SetValue(() => PasswordPrompt, value); }
+        }
+
+
+        public bool rememberMe
+        {
+            get { return GetValue(() => rememberMe); }
+            set { SetValue(() => rememberMe, value); }
+        }
+
         public String indexURL 
         {
             get { return GetValue(() => indexURL); }
@@ -263,11 +280,44 @@ namespace EvoPrinterUI
 
         readonly Task _ghostTask;
         readonly String _outputPdfPath;
+
+        Uri[] _evoServers = new Uri[] { };
+        
+
         public Processor()
         {
 #if RELEASE
             isWindowTopMost = true;
 #endif
+
+            PasswordPrompt = "Password";
+
+            try
+            {
+                if (!String.IsNullOrWhiteSpace(Properties.Settings.Default.evoServerURI))
+                {
+                    selectedServer = new Uri(Properties.Settings.Default.evoServerURI);
+                    _evoServers = new[] { selectedServer };
+                }
+
+                UserName = Properties.Settings.Default.username;
+
+                if (!String.IsNullOrWhiteSpace(Properties.Settings.Default.password))
+                {
+                    string description;
+                    Password = DPAPI.Decrypt(Properties.Settings.Default.password,
+                                    DAPIENTROPY,
+                                out description);
+
+                    rememberMe = true;
+                    PasswordPrompt = "Using remembered password";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //todo : log
+            }
 
             postBtnAvailable = true;
             _outputPdfPath = Path.Combine(_tmpFolder,
@@ -377,6 +427,24 @@ namespace EvoPrinterUI
                                     });
 
                                     CLoseit();
+
+                                    if (rememberMe)
+                                    {
+                                        Properties.Settings.Default.evoServerURI = selectedServer.ToString();
+                                        Properties.Settings.Default.username = UserName;
+                                        Properties.Settings.Default.password = DPAPI.Encrypt(DPAPI.KeyType.UserKey,
+                                                                              Password,
+                                                                              DAPIENTROPY,
+                                                                              "MyEVO printer password");
+                                    }
+                                    else
+                                    {
+                                        Properties.Settings.Default.evoServerURI = null;
+                                        Properties.Settings.Default.username = null;
+                                        Properties.Settings.Default.password = null;
+                                    }
+
+                                    Properties.Settings.Default.Save();
 
                                     var linkURL = string.Format("http://{0}:{1}/#/docviewer_newDoc?routeContext=shortcode:{2}",
                                             selectedServer.DnsSafeHost, selectedServer.Port, JobCode.code);

@@ -110,6 +110,7 @@
     <Compile Include="BrowserControl.xaml.cs">
       <DependentUpon>BrowserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DPAPI.cs" />
     <Compile Include="modelBase.cs" />
     <Compile Include="uriCOnverter.cs" />
     <Page Include="BrowserControl.xaml">

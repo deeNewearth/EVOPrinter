@@ -8,7 +8,7 @@
         ResizeMode="CanResizeWithGrip"
         Title="Print to EVO"
          
-        
+        ShowInTaskbar="True"
         Topmost="{Binding currDisplay.isWindowTopMost}" WindowStyle="ToolWindow"
         
         Icon="icon.ico"
@@ -222,10 +222,14 @@
 
                                         <TextBox  local:Behaviours.WaterMark="User name" Margin="30,5" x:Name="tbUser"
                                           Text="{Binding UserName, ValidatesOnDataErrors=True}"/>
-                                        <PasswordBox x:Name="password" local:Behaviours.WaterMark="Password" Margin="30,5"
+                                        <PasswordBox x:Name="password" local:Behaviours.WaterMark="{Binding PasswordPrompt}" Margin="30,5"
                                          local:Behaviours.BindPassword="true"
                                          local:Behaviours.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          />
+                                        
+                                        <CheckBox IsChecked="{Binding rememberMe}"
+                                                  Margin="30,5" Foreground="White"
+                                                  >Remember me</CheckBox>
                                     </StackPanel>
 
                                     <Button Click="Button_Click" Margin="50,15,50,5" Background="#5cb85c" Foreground="White" 

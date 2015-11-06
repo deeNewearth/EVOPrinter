@@ -6,7 +6,7 @@
 
   <?include .\globals.wxi ?>
   
-  <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="Labizbille" 
+  <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.1.0" Manufacturer="Labizbille" 
                                                       UpgradeCode="6cb7750f-b2f9-48a8-802f-bb61c2edb9b7">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" 
               InstallPrivileges="elevated" 

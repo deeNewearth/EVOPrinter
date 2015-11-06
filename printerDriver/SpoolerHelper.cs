@@ -554,20 +554,41 @@ namespace printerDriver
             //3 - Add Printer Driver
             _logHelper.Log("Adding Printer Driver.");
             AddPrinterDriver(printerProps.driverName, driverPath, dataPath, configPath, helpPath);
-                   
+
+
+            bool vPortConfigreRequired = true;
             //4 - Add Printer
             _logHelper.Log("Adding Printer");
-            AddPrinter(printerName, printerProps.portName, printerProps.driverName);
-            
-            //5 - Configure Virtual Port
-            _logHelper.Log("Configuring Virtual Port");
-            ConfigureVirtualPort(printerProps._monitorName, printerProps.portName, Execpath);
-            
-            //6 - Restart Spool Service
-            _logHelper.Log("Restarting Spool Service");
-            GenericResult restartSpoolResult = RestartSpoolService();
-            if (restartSpoolResult.Success == false)
-                throw restartSpoolResult.Exception;
+            try
+            {
+                AddPrinter(printerName, printerProps.portName, printerProps.driverName);
+            }
+            catch (Win32Exception ex)
+            {
+                _logHelper.Log("Adding printer error :" + ex.NativeErrorCode.ToString());
+                if (1802 == ex.NativeErrorCode)
+                {
+                    _logHelper.Log("Printer already exists, skipping configuration");
+                    vPortConfigreRequired = false;
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+
+            if (vPortConfigreRequired)
+            {
+                //5 - Configure Virtual Port
+                _logHelper.Log("Configuring Virtual Port");
+                ConfigureVirtualPort(printerProps._monitorName, printerProps.portName, Execpath);
+
+                //6 - Restart Spool Service
+                _logHelper.Log("Restarting Spool Service");
+                GenericResult restartSpoolResult = RestartSpoolService();
+                if (restartSpoolResult.Success == false)
+                    throw restartSpoolResult.Exception;
+            }
 
             _logHelper.Log("AddVPrinter Success");
         }
